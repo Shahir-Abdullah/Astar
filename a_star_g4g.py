@@ -122,6 +122,8 @@ def generate_successor(grid, node):
     return successors
 def heuristic_manhattan(node, goal_node):
     return (abs(node[0]-goal_node[0]) + abs(node[1]-goal_node[1]))
+def heuristic_diagonal(node, goal_node):
+    return max(abs(node[0]-goal_node[0]), abs(node[1]-goal_node[1]))
 def least_f(f, open_list):
     min = 10000
     q = ()
@@ -146,7 +148,7 @@ def a_star(grid, start_node, goal_node):
     closed_list = []
     open_list.append(start_node)
     g[start_node] = 0
-    f[start_node] = heuristic_manhattan(start_node, goal_node) + g[start_node]
+    f[start_node] = heuristic_diagonal(start_node, goal_node) + g[start_node]
 
     while open_list:
         q = least_f(f, open_list)
@@ -158,7 +160,7 @@ def a_star(grid, start_node, goal_node):
             if successor == goal_node:
                 
                 g[successor] = g[q] + 1
-                f[successor] = heuristic_manhattan(successor, goal_node) + g[successor]
+                f[successor] = heuristic_diagonal(successor, goal_node) + g[successor]
                 
                 closed_list.append(q)
                 closed_list.append(successor)
@@ -168,17 +170,17 @@ def a_star(grid, start_node, goal_node):
                 
             if successor in open_list:
                 for x in open_list:
-                    if x == successor and f[x] < heuristic_manhattan(successor, goal_node):
+                    if x == successor and f[x] < f[successor]:
                         continue
             
                 
             if successor in closed_list:
                 for x in closed_list:
-                    if x == successor and f[x] < heuristic_manhattan(successor, goal_node):
+                    if x == successor and f[x] < f[successor]:
                         continue
                     
-            f[successor] = heuristic_manhattan(successor, goal_node)
-            g[successor] = g[q] + heuristic_manhattan(q, successor)
+            f[successor] = heuristic_diagonal(successor, goal_node)
+            g[successor] = g[q] + heuristic_diagonal(q, successor)
             open_list.append(successor)
         closed_list.append(q)
     
